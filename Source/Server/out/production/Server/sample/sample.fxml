@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <left>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btnSendFile" mnemonicParsing="false" onAction="#sendSingleFile" text="Send File" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <TextArea fx:id="txtLog" maxWidth="600.0" prefHeight="555.0" prefWidth="500.0" BorderPane.alignment="CENTER" />
+   </center>
+   <right>
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="555.0" prefWidth="553.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <VBox prefHeight="279.0" prefWidth="435.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label text="Incoming" />
+                        <TableView fx:id="tblIncoming" prefHeight="262.0" prefWidth="419.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <VBox prefHeight="279.0" prefWidth="436.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label text="Outgoing" />
+                        <TableView fx:id="tblOutgoing" prefHeight="256.0" prefWidth="436.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </children></AnchorPane>
+        </items>
+      </SplitPane>
+   </right>
+   <bottom>
+      <HBox prefHeight="0.0" prefWidth="1117.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="lblStatus" text="Label" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
