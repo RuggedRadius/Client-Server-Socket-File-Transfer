@@ -63,7 +63,7 @@ public class Client
         try
         {
             out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-            System.out.println("Client initialised.");
+            in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         }
         catch (IOException e)
         {
@@ -72,31 +72,22 @@ public class Client
         }
     }
 
-    public void startClient()
-    {
+    public void startClient() {
         launchSendingLoop();
-//        launchReceivingLoop();
+        launchReceivingLoop();
     }
 
-    public void launchReceivingLoop() {
+    // Connection Methods
+    public void endConnection() throws IOException {
 
-        controller.log("Launching client receiver loop...");
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (true)
-                {
-                    controller.log("Begin receiving file");
-                    receiveFile();
-                }
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
+        // Close connection
+        out.close();
+        in.close();
+        socket.close();
     }
 
-    public void launchSendingLoop()
-    {
+    // Send Methods
+    public void launchSendingLoop() {
         Runnable sendLoopRunnable = new Runnable() {
             @Override
             public void run() {
@@ -110,7 +101,7 @@ public class Client
                             File fileToSend = outgoingFiles.poll();
 
                             if (fileToSend != null) {
-                                controller.log("Sending file: " + fileToSend.getName());
+                                System.out.println("Sending file: " + fileToSend.getName());
                                 sendFile(fileToSend);
                             }
                         }
@@ -121,7 +112,7 @@ public class Client
                 }
                 catch (Exception ex)
                 {
-                    controller.log("Error attempting to receive file: " + ex.getCause());
+                    System.out.println("Error attempting to receive file: " + ex.getCause());
                     System.err.println("Error attempting to receive file: " + ex.getCause());
                     ex.printStackTrace();
                 }
@@ -131,24 +122,13 @@ public class Client
         sendLoop.setName("Send Loop Thread");
         sendLoop.start();
     }
-
-    // Connection Methods
-    public void endConnection() throws IOException {
-
-        // Close connection
-        out.close();
-        in.close();
-        socket.close();
-    }
-
-    // Send Methods
     public void sendFile(File file) throws IOException {
 
         if (file == null)
             return;
 
         sendingFile = true;
-        controller.log("Sending file: " + file.getName());
+        System.out.println("Sending file: " + file.getName());
 
         // Get file contents as byte array
         byte[] fileContent = Files.readAllBytes(file.toPath());
@@ -160,33 +140,41 @@ public class Client
         out.writeInt(fileContent.length);
         out.write(fileContent);
 
-        controller.log("File "+file.getName()+" sent successfully.");
+        System.out.println("File "+file.getName()+" sent successfully.");
         sendingFile = false;
     }
 
     // Receive Methods
+    public void launchReceivingLoop() {
+        System.out.println("Launching client receiver loop...");
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                while (true)
+                {
+                    receiveFile();
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
     public void receiveFile() {
 
         receivingFile = true;
-        controller.log("Awaiting incoming file...");
+        System.out.println("Awaiting incoming file...");
 
         try
         {
             if (socket == null)
-            {
-                socket = new Socket(host, currentPort);
-                in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            }
+                return;
 
-
-
-            // Get name of incoming file
-            // Get length of incoming file
+            // Get name and length of incoming file
             String fileName = in.readUTF();
             int length = in.readInt();
 
-            controller.log("File: " + fileName);
-            controller.log("Length: " + length);
+            System.out.println("File: " + fileName);
+            System.out.println("Length: " + length);
 
             if (length > 0)
             {
@@ -201,8 +189,7 @@ public class Client
                 // Close file output
                 fos.close();
             }
-            else
-            {
+            else {
                 JOptionPane.showMessageDialog(
                         null,
                         "File contents had a length of 0.",
@@ -219,7 +206,6 @@ public class Client
             System.out.println("Server error: " + ex.getMessage());
         }
 
-        controller.log("File received successfully.");
         receivingFile = false;
     }
     private void addCompletedRecordToIncoming(String fileName) {

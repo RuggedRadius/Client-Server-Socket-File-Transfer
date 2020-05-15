@@ -3,10 +3,7 @@ package sample;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
@@ -18,6 +15,7 @@ import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.ResultSet;
+import java.util.List;
 
 public class Controller
 {
@@ -30,67 +28,32 @@ public class Controller
     // FX Controls
     public TableView tblIncoming;
     public TableView tblOutgoing;
-    public Label lblStatus;
-    public TextArea txtLog;
 
+    public Label lblStatus;
+
+    public TextField txtPortNumber;
 
     public void initialize() {
-
-        log("Initialising server...");
-
         initIncomingTable();
         initOutgoingTable();
-        initServer();
-    }
 
-    public void log(String message) {
-//        // Log message to text area
-//        StringBuilder fieldContent = new StringBuilder(txtLog.getText());
-//        fieldContent.append(message+"\n");
-//        txtLog.setText(fieldContent.toString());
-//        lblStatus.setText(message);
-        System.out.println(message);
-    }
-
-    private void initServer() {
         try
         {
             // Create server
-            int port = 1235;
+            int port = Integer.parseInt(txtPortNumber.getText());
             server = new Server(port, this);
 
             // Launch server
+            lblStatus.setText("Launching server...");
             server.launchServer();
+            lblStatus.setText("Sever running");
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
     }
-//    private void createListeningLoop()
-//    {
-//        System.out.println("Creating listening loop...");
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                while (true)
-//                {
-//                    try
-//                    {
-//                        server.receiveFile();
-//                        Thread.sleep(100);
-//                    }
-//                    catch (IOException | InterruptedException e)
-//                    {
-//                        System.err.println("Error attempting to receiving");
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        };
-//        Thread thread = new Thread(runnable);
-//        thread.start();
-//    }
+
     private void initIncomingTable() {
 
         // Set table data
@@ -100,6 +63,7 @@ public class Controller
         // Create columns
         TableColumn<String, FileTransfer> colFileName = new TableColumn("File Name");
         colFileName.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+        colFileName.setPrefWidth(500);
 
         TableColumn<String, FileTransfer> colProgress = new TableColumn("Progress");
         colProgress.setCellValueFactory(new PropertyValueFactory<>("progress"));
@@ -119,6 +83,7 @@ public class Controller
         // Create columns
         TableColumn<String, FileTransfer> colFileName = new TableColumn("File Name");
         colFileName.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+        colFileName.setPrefWidth(250);
 
         TableColumn<String, FileTransfer> colProgress = new TableColumn("Progress");
         colProgress.setCellValueFactory(new PropertyValueFactory<>("progress"));
@@ -130,31 +95,37 @@ public class Controller
         tblOutgoing.getColumns().addAll(colFileName, colStatus, colProgress);
     }
 
-
-    @FXML
-    public void TESTSEND()
-    {
-        File test = new File("C:\\Users\\Ben\\Documents\\code-rain.jpg");
-        sendFile(test);
+    @FXML public void sendSingleFile() {
+        File fileToSend = getLocalFile();
+        if (fileToSend != null) {
+            sendFile(getLocalFile());
+        }
+    }
+    @FXML public void sendMultipleFiles() {
+        List<File> filesToSend = getLocalFiles();
+        if (filesToSend != null && filesToSend.size() > 0) {
+            for (File file : filesToSend)
+                sendFile(file);
+        }
     }
 
-    @FXML
-    public void sendSingleFile() {
-//        TESTSEND();
-        sendFile(getLocalFile());
-    }
     public File getLocalFile() {
 
         FileChooser mrChoosey = new FileChooser();
         return  mrChoosey.showOpenDialog(null);
     }
+    public List<File> getLocalFiles() {
+        FileChooser mrChoosey = new FileChooser();
+        return  mrChoosey.showOpenMultipleDialog(null);
+    }
+
     public void sendFile(File file) {
 
         if (server != null)
         {
             // Create File transfer for table
             FileTransfer newTransfer = new FileTransfer(file);
-            newTransfer.status = "Pending";
+            newTransfer.status = "Completed";
             newTransfer.progress = 0.0;
             filesOutgoing.add(newTransfer);
 
@@ -162,7 +133,7 @@ public class Controller
             server.outgoingFiles.add(file);
 
             // Log to user
-            log("File " + file.getName() + " added to outgoing queue.");
+            System.out.println("File " + file.getName() + " added to outgoing queue.");
         }
         else
         {
@@ -174,6 +145,10 @@ public class Controller
                     JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+
+    @FXML public void exitApplication() {
+        System.exit(0);
     }
 
 }

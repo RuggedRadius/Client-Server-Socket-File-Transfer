@@ -3,18 +3,23 @@ package sample;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.List;
 
 public class Controller
 {
-    public TextArea txtLog;
+    // FX Controls
+    public Label lblStatus;
+    public TextField txtIp1;
+    public TextField txtIp2;
+    public TextField txtIp3;
+    public TextField txtIp4;
+    public TextField txtPortNumber;
 
     public TableView tblIncoming;
     public TableView tblOutgoing;
@@ -25,44 +30,52 @@ public class Controller
     private Client client;
 
     public void initialize() {
-
-//        log("Initialising client...");
-
+        // Init tables
         initIncomingTable();
         initOutgoingTable();
 
-        initClient();
+        // Create client
+        int port = Integer.parseInt(txtPortNumber.getText());
+        lblStatus.setText("Initialising client...");
+        client = new Client(getIpAddress(), port, this);
+        lblStatus.setText("Running client...");
+        client.startClient();
+        lblStatus.setText("Client running");
+    }
+    private String getIpAddress() {
+        return txtIp1.getText() + "." + txtIp2.getText() + "." +txtIp3.getText() + "." +txtIp4.getText() + "";
     }
 
-    public void log(String message) {
-//        StringBuilder fieldContent = new StringBuilder(txtLog.getText());
-//        fieldContent.append(message+"\n");
-//        txtLog.setText(fieldContent.toString());
-        System.out.println(message);
+    @FXML public void sendSingleFile() {
+        File fileToSend = getLocalFile();
+        if (fileToSend != null) {
+            sendFile(getLocalFile());
+        }
+    }
+    @FXML public void sendMultipleFiles() {
+        List<File> filesToSend = getLocalFiles();
+        if (filesToSend != null && filesToSend.size() > 0) {
+            for (File file : filesToSend)
+                sendFile(file);
+        }
     }
 
-    @FXML
-    public void TESTSEND() {
-        File test = new File("C:\\Users\\Ben\\Documents\\code-rain.jpg");
-        sendFile(test);
-    }
-    @FXML
-    public void sendSingleFile() {
-//        TESTSEND();
-        sendFile(getLocalFile());
-    }
     public File getLocalFile() {
-
         FileChooser mrChoosey = new FileChooser();
         return  mrChoosey.showOpenDialog(null);
     }
+    public List<File> getLocalFiles() {
+        FileChooser mrChoosey = new FileChooser();
+        return  mrChoosey.showOpenMultipleDialog(null);
+    }
+
     public void sendFile(File file) {
 
         if (client != null)
         {
             // Create File transfer for table
             FileTransfer newTransfer = new FileTransfer(file);
-            newTransfer.status = "Pending";
+            newTransfer.status = "Completed";
             newTransfer.progress = 0.0;
             filesOutgoing.add(newTransfer);
 
@@ -70,7 +83,7 @@ public class Controller
             client.outgoingFiles.add(file);
 
             // Log to user
-            log("File " + file.getName() + " added to outgoing queue.");
+            lblStatus.setText("File " + file.getName() + " added to outgoing queue.");
         }
         else
         {
@@ -84,39 +97,6 @@ public class Controller
         }
     }
 
-    private void initClient() {
-
-        // Create client
-        String host = "127.0.0.1";
-        int port = 1235;
-        log("Initialising client...");
-        client = new Client(host, port, this);
-
-        client.startClient();
-    }
-
-//    private void receiveFile()
-//    {
-//        try (Socket socket = new Socket(client.host, client.currentPort))
-//        {
-//            log("Socket opened");
-//            client.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-//
-//            log("Receiving file...");
-//            client.receiveFile();
-//
-//            System.out.println("Client finished");
-//        }
-//        catch (UnknownHostException ex)
-//        {
-//            System.out.println("Server not found: " + ex.getMessage());
-//        }
-//        catch (IOException ex)
-//        {
-//            System.out.println("I/O error: " + ex.getMessage());
-//        }
-//    }
-
     private void initIncomingTable() {
 
         // Set table data
@@ -126,6 +106,7 @@ public class Controller
         // Create columns
         TableColumn<String, FileTransfer> colFileName = new TableColumn("File Name");
         colFileName.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+        colFileName.setPrefWidth(500);
 
         TableColumn<String, FileTransfer> colProgress = new TableColumn("Progress");
         colProgress.setCellValueFactory(new PropertyValueFactory<>("progress"));
@@ -145,6 +126,7 @@ public class Controller
         // Create columns
         TableColumn<String, FileTransfer> colFileName = new TableColumn("File Name");
         colFileName.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+        colFileName.setPrefWidth(250);
 
         TableColumn<String, FileTransfer> colProgress = new TableColumn("Progress");
         colProgress.setCellValueFactory(new PropertyValueFactory<>("progress"));
@@ -156,4 +138,7 @@ public class Controller
         tblOutgoing.getColumns().addAll(colFileName, colStatus, colProgress);
     }
 
+    @FXML public void exitApplication() {
+        System.exit(0);
+    }
 }

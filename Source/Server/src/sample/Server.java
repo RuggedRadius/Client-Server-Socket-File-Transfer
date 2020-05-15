@@ -42,28 +42,6 @@ public class Server
         outgoingFiles = new LinkedList<>();
     }
 
-    private Thread launchClientWaitThread() {
-        Runnable waitForClient = new Runnable() {
-            @Override
-            public void run() {
-                while (socket == null)
-                {
-                    System.out.print(".");
-                    try
-                    {
-                        Thread.sleep(250);
-                    }
-                    catch (InterruptedException e) {}
-                }
-            }
-        };
-        Thread waitThread = new Thread(waitForClient);
-        waitThread.setName("Waiting for client thread");
-        waitThread.start();
-        return waitThread;
-    }
-
-
     private void getSocket() throws IOException {
         System.out.println("Waiting for client to accept server socket.");
 
@@ -82,7 +60,7 @@ public class Server
     }
     public void launchServer() {
 
-        controller.log("Launching server...");
+        System.out.println("Launching server...");
 
         Runnable sendLoopRunnable = new Runnable() {
             @Override
@@ -102,7 +80,7 @@ public class Server
                             File fileToSend = outgoingFiles.poll();
 
                             if (fileToSend != null) {
-                                controller.log("Sending file: " + fileToSend.getName());
+                                System.out.println("Sending file: " + fileToSend.getName());
                                 sendFile(fileToSend);
                             }
                         }
@@ -113,7 +91,7 @@ public class Server
                 }
                 catch (Exception ex)
                 {
-                    controller.log("Error attempting to receive file: " + ex.getCause());
+                    System.out.println("Error attempting to receive file: " + ex.getCause());
                     System.err.println("Error attempting to receive file: " + ex.getCause());
                     ex.printStackTrace();
                 }
@@ -139,7 +117,7 @@ public class Server
                 }
                 catch (Exception ex)
                 {
-                    controller.log("Error attempting to receive file: " + ex.getCause());
+                    System.out.println("Error attempting to receive file: " + ex.getCause());
                     System.err.println("Error attempting to receive file: " + ex.getCause());
                     ex.printStackTrace();
                 }
@@ -157,7 +135,7 @@ public class Server
             return;
 
         sendingFile = true;
-        controller.log("Sending file: " + file.getName());
+        System.out.println("Sending file: " + file.getName());
 
         // Get file contents as byte array
         byte[] fileContent = Files.readAllBytes(file.toPath());
@@ -169,28 +147,27 @@ public class Server
         out.writeInt(fileContent.length);
         out.write(fileContent);
 
-        controller.log("File "+file.getName()+" sent successfully.");
+        System.out.println("File "+file.getName()+" sent successfully.");
         sendingFile = false;
     }
 
     // Receive Methods
     public void receiveFile() {
         receivingFile = true;
-        if (socket == null)
-        {
-//            System.out.println("Socket is null, no receiving can be done.");
+        if (socket == null) {
+            receivingFile = false;
             return;
         }
-        try
-        {
+
+        try {
             System.out.println("Waiting to receive file...");
             // Get name of incoming file
             // Get length of incoming file
             String fileName = in.readUTF();
             int length = in.readInt();
 
-            controller.log("File: " + fileName);
-            controller.log("Length: " + length);
+            System.out.println("File: " + fileName);
+            System.out.println("Length: " + length);
 
             if (length > 0)
             {
