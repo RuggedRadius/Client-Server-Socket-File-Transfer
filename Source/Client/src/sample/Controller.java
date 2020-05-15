@@ -7,7 +7,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Controller
 {
@@ -23,7 +26,7 @@ public class Controller
 
     public void initialize() {
 
-        log("Initialising client...");
+//        log("Initialising client...");
 
         initIncomingTable();
         initOutgoingTable();
@@ -35,47 +38,63 @@ public class Controller
         StringBuilder fieldContent = new StringBuilder(txtLog.getText());
         fieldContent.append(message+"\n");
         txtLog.setText(fieldContent.toString());
+        System.out.println(message);
     }
 
     private void initClient() {
-        try
-        {
-            // Create client
-            String host = "127.0.0.1";
-            int port = 1235;
-            client = new Client(host, port);
-            client.controller = this;
 
-            // Create listening loop on separate thread
-            System.out.println("Starting receiving loop...");
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    while (true)
-                    {
-                        try
-                        {
-                            if (!client.receivingFile) {
-                                client.receiveFile();
-                            }
-                            Thread.sleep(100);
-                        }
-                        catch (IOException | InterruptedException e)
-                        {
-                            System.err.println("Error attempting to receive file");
-                            e.printStackTrace();
-                        }
-                    }
+        // Create client
+        String host = "127.0.0.1";
+        int port = 1235;
+        log("Initialising client...");
+        client = new Client(host, port, this);
+
+
+
+        log("Launching client receiver loop...");
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                while (true)
+                {
+                    receiveFile();
                 }
-            };
-            Thread thread = new Thread(runnable);
-            thread.start();
-        }
-        catch (IOException | InterruptedException e)
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+
+
+
+
+
+
+
+
+    }
+
+    private void receiveFile()
+    {
+        try (Socket socket = new Socket(client.host, client.currentPort))
         {
-            e.printStackTrace();
+            log("Socket opened");
+            client.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+
+            log("Receiving file...");
+            client.receiveFile();
+
+            System.out.println("Client finished");
+        }
+        catch (UnknownHostException ex)
+        {
+            System.out.println("Server not found: " + ex.getMessage());
+        }
+        catch (IOException ex)
+        {
+            System.out.println("I/O error: " + ex.getMessage());
         }
     }
+
     private void initIncomingTable() {
 
         // Set table data

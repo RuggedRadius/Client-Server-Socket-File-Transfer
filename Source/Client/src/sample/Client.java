@@ -8,16 +8,17 @@ import javafx.scene.layout.Pane;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Queue;
 
 public class Client
 {
     public Controller controller;
-    Socket socket;
-    DataOutputStream out;
-    DataInputStream in;
-    String host = "127.0.0.1";
-    int currentPort;
+    public Socket socket;
+    public DataOutputStream out;
+    public DataInputStream in;
+    public String host;
+    public int currentPort;
 
     Queue<File> outgoingFiles;
 
@@ -26,36 +27,13 @@ public class Client
     boolean initialised;
 
 
-    public Client(String _host, int port) throws IOException, InterruptedException {
+    public Client(String _host, int port, Controller _controller)
+    {
+        controller = _controller;
+
         // Determine IP address, socket and port
         currentPort = port;
         host = _host;
-
-        while (!initialised)
-        {
-
-
-            // Set up waiting display frame
-            Pane waitingPane = new Pane();
-
-
-
-            try
-            {
-                socket = new Socket(host, currentPort);
-            }
-            catch (Exception ex)
-            {
-                Thread.sleep(100);
-                System.out.print(".");
-            }
-        }
-
-
-
-        // Assign streams for comms
-        out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-        in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
     }
 
     public void endConnection() throws IOException {
@@ -66,19 +44,21 @@ public class Client
         socket.close();
     }
 
-    public void receiveFile() throws IOException {
+    public void receiveFile() throws IOException
+    {
+        receivingFile = true;
+        controller.log("Awaiting incoming file...");
 
-        if (!receivingFile)
-        {
-            receivingFile = true;
-            controller.log("Awaiting incoming file...");
+        try (Socket socket = new Socket(host, currentPort)) {
+
+            in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 
             // Get name of incoming file
-            String fileName = in.readUTF();
-            controller.log("File: " + fileName);
-
             // Get length of incoming file
+            String fileName = in.readUTF();
             int length = in.readInt();
+
+            controller.log("File: " + fileName);
             controller.log("Length: " + length);
 
             if (length > 0)
@@ -104,15 +84,25 @@ public class Client
                 );
             }
 
-            // Create File transfer for table
-            File receivedFile = new File(fileName);
-            FileTransfer newTransfer = new FileTransfer(receivedFile);
-            newTransfer.status = "Completed";
-            newTransfer.progress = 100.0;
-            controller.filesIncoming.add(newTransfer);
-
-            controller.log("File received successfully.");
-            receivingFile = false;
+            // Add to outgoing table
+            addCompletedRecordToIncoming(fileName);
         }
+        catch (Exception ex)
+        {
+            System.out.println("Server error: " + ex.getMessage());
+        }
+
+        controller.log("File received successfully.");
+        receivingFile = false;
+    }
+
+    private void addCompletedRecordToIncoming(String fileName)
+    {
+        // Create File transfer for table
+        File receivedFile = new File(fileName);
+        FileTransfer newTransfer = new FileTransfer(receivedFile);
+        newTransfer.status = "Completed";
+        newTransfer.progress = 100.0;
+        controller.filesIncoming.add(newTransfer);
     }
 }

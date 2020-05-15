@@ -14,6 +14,8 @@ import javafx.stage.FileChooser;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.sql.ResultSet;
 
 public class Controller
@@ -42,6 +44,7 @@ public class Controller
 
 
 
+
     }
 
     public void log(String message) {
@@ -59,8 +62,8 @@ public class Controller
             int port = 1235;
             server = new Server(port, this);
 
-            // Create listening loop on separate thread
-//            createListeningLoop();
+            // Launch server
+            server.launchServer();
         }
         catch (IOException e)
         {
@@ -134,6 +137,7 @@ public class Controller
     public void TESTSEND()
     {
         File test = new File("C:\\Users\\Ben\\Documents\\code-rain.jpg");
+
         sendFile(test);
     }
 
