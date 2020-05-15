@@ -14,25 +14,26 @@ import javafx.stage.FileChooser;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.ResultSet;
 
 public class Controller
 {
-    public TextArea txtLog;
-
-    // FX Controls
-    public TableView tblIncoming;
-    public TableView tblOutgoing;
-    public Label lblStatus;
-
+    // Attributes
     public ObservableList<FileTransfer> filesIncoming;
     public ObservableList<FileTransfer> filesOutgoing;
 
     public Server server;
 
-    // Attributes
+    // FX Controls
+    public TableView tblIncoming;
+    public TableView tblOutgoing;
+    public Label lblStatus;
+    public TextArea txtLog;
+
+
     public void initialize() {
 
         log("Initialising server...");
@@ -40,19 +41,15 @@ public class Controller
         initIncomingTable();
         initOutgoingTable();
         initServer();
-
-
-
-
-
     }
 
     public void log(String message) {
-        // Log message to text area
-        StringBuilder fieldContent = new StringBuilder(txtLog.getText());
-        fieldContent.append(message+"\n");
-        txtLog.setText(fieldContent.toString());
-        lblStatus.setText(message);
+//        // Log message to text area
+//        StringBuilder fieldContent = new StringBuilder(txtLog.getText());
+//        fieldContent.append(message+"\n");
+//        txtLog.setText(fieldContent.toString());
+//        lblStatus.setText(message);
+        System.out.println(message);
     }
 
     private void initServer() {
@@ -134,18 +131,17 @@ public class Controller
     }
 
 
+    @FXML
     public void TESTSEND()
     {
         File test = new File("C:\\Users\\Ben\\Documents\\code-rain.jpg");
-
         sendFile(test);
     }
 
     @FXML
-    public void sendSingleFile()
-    {
-        TESTSEND();
-//        sendFile(getLocalFile());
+    public void sendSingleFile() {
+//        TESTSEND();
+        sendFile(getLocalFile());
     }
     public File getLocalFile() {
 
@@ -156,25 +152,21 @@ public class Controller
 
         if (server != null)
         {
-            try
-            {
-                // Send the file
-                server.sendFile(file);
-            }
-            catch (IOException e)
-            {
-                // Show error
-                JOptionPane.showMessageDialog(
-                        null,
-                        "An error occured while sending the file.",
-                        "Error sending file.",
-                        JOptionPane.ERROR_MESSAGE
-                );
-                e.printStackTrace();
-            }
+            // Create File transfer for table
+            FileTransfer newTransfer = new FileTransfer(file);
+            newTransfer.status = "Pending";
+            newTransfer.progress = 0.0;
+            filesOutgoing.add(newTransfer);
+
+            // Add to outgoing queue for processing
+            server.outgoingFiles.add(file);
+
+            // Log to user
+            log("File " + file.getName() + " added to outgoing queue.");
         }
         else
         {
+            System.out.println("Error: No server found!");
             JOptionPane.showMessageDialog(
                     null,
                     "No server found.",

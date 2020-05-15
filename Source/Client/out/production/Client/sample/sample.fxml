@@ -28,8 +28,8 @@
     <left>
         <VBox BorderPane.alignment="CENTER">
             <children>
-                <Button mnemonicParsing="false" text="Button" />
-                <Button mnemonicParsing="false" text="Button" />
+                <Button fx:id="btnSendFile" mnemonicParsing="false" onAction="#sendSingleFile" text="Send File" />
+                <Button fx:id="btnTESTSEND" mnemonicParsing="false" onAction="#TESTSEND" text="TEST" />
             </children>
         </VBox>
     </left>

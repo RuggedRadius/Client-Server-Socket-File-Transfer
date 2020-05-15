@@ -2,15 +2,15 @@ package sample;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import javax.swing.*;
+import java.io.File;
 
 public class Controller
 {
@@ -35,10 +35,53 @@ public class Controller
     }
 
     public void log(String message) {
-        StringBuilder fieldContent = new StringBuilder(txtLog.getText());
-        fieldContent.append(message+"\n");
-        txtLog.setText(fieldContent.toString());
+//        StringBuilder fieldContent = new StringBuilder(txtLog.getText());
+//        fieldContent.append(message+"\n");
+//        txtLog.setText(fieldContent.toString());
         System.out.println(message);
+    }
+
+    @FXML
+    public void TESTSEND() {
+        File test = new File("C:\\Users\\Ben\\Documents\\code-rain.jpg");
+        sendFile(test);
+    }
+    @FXML
+    public void sendSingleFile() {
+//        TESTSEND();
+        sendFile(getLocalFile());
+    }
+    public File getLocalFile() {
+
+        FileChooser mrChoosey = new FileChooser();
+        return  mrChoosey.showOpenDialog(null);
+    }
+    public void sendFile(File file) {
+
+        if (client != null)
+        {
+            // Create File transfer for table
+            FileTransfer newTransfer = new FileTransfer(file);
+            newTransfer.status = "Pending";
+            newTransfer.progress = 0.0;
+            filesOutgoing.add(newTransfer);
+
+            // Add to outgoing queue for processing
+            client.outgoingFiles.add(file);
+
+            // Log to user
+            log("File " + file.getName() + " added to outgoing queue.");
+        }
+        else
+        {
+            System.out.println("Error: No server found!");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No server found.",
+                    "Server Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     private void initClient() {
@@ -49,51 +92,30 @@ public class Controller
         log("Initialising client...");
         client = new Client(host, port, this);
 
-
-
-        log("Launching client receiver loop...");
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (true)
-                {
-                    receiveFile();
-                }
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-
-
-
-
-
-
-
-
+        client.startClient();
     }
 
-    private void receiveFile()
-    {
-        try (Socket socket = new Socket(client.host, client.currentPort))
-        {
-            log("Socket opened");
-            client.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-
-            log("Receiving file...");
-            client.receiveFile();
-
-            System.out.println("Client finished");
-        }
-        catch (UnknownHostException ex)
-        {
-            System.out.println("Server not found: " + ex.getMessage());
-        }
-        catch (IOException ex)
-        {
-            System.out.println("I/O error: " + ex.getMessage());
-        }
-    }
+//    private void receiveFile()
+//    {
+//        try (Socket socket = new Socket(client.host, client.currentPort))
+//        {
+//            log("Socket opened");
+//            client.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+//
+//            log("Receiving file...");
+//            client.receiveFile();
+//
+//            System.out.println("Client finished");
+//        }
+//        catch (UnknownHostException ex)
+//        {
+//            System.out.println("Server not found: " + ex.getMessage());
+//        }
+//        catch (IOException ex)
+//        {
+//            System.out.println("I/O error: " + ex.getMessage());
+//        }
+//    }
 
     private void initIncomingTable() {
 
