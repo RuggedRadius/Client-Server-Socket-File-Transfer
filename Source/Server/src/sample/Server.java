@@ -29,6 +29,11 @@ public class Server
     boolean receivingFile;
     boolean sendingFile;
 
+    Thread receiveLoopThread;
+    Thread sendLoopThread;
+
+
+
 
     // Constructor
     public Server(int port, Controller _controller) throws IOException {
@@ -45,87 +50,19 @@ public class Server
     private void getSocket() throws IOException {
         System.out.println("Waiting for client to accept server socket.");
 
-//        Thread waitThread = launchClientWaitThread();
-
         // Wait for client to accept socket
-        socket = serverSocket.accept();
+        if (serverSocket != null) {
+            socket = serverSocket.accept();
+        }
+        else
+        {
+            System.err.println("ServerSocket is null, still attempting to get socket from server.");
+        }
 
         System.out.println("\nClient accepted server socket.");
 
-        // Stop waiting thread
-//        waitThread.interrupt();
-
         in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-    }
-    public void launchServer() {
-
-        System.out.println("Launching server...");
-
-        Runnable sendLoopRunnable = new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    while (true)
-                    {
-                        // Make sure socket is assigned
-                        if (socket == null) {
-                            getSocket();
-                        }
-
-                        // send data to the client (if any)
-                        if (outgoingFiles.size() > 0) {
-
-                            File fileToSend = outgoingFiles.poll();
-
-                            if (fileToSend != null) {
-                                System.out.println("Sending file: " + fileToSend.getName());
-                                sendFile(fileToSend);
-                            }
-                        }
-
-                        // Do a little sleep
-                        Thread.sleep(250);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.out.println("Error attempting to receive file: " + ex.getCause());
-                    System.err.println("Error attempting to receive file: " + ex.getCause());
-                    ex.printStackTrace();
-                }
-            }
-        };
-        Thread sendLoop = new Thread(sendLoopRunnable);
-        sendLoop.setName("Send Loop Thread");
-        sendLoop.start();
-
-        Runnable receiveLoopRunnable = new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    while (true)
-                    {
-                        // Receive file
-                        receiveFile();
-
-                        // Do a little sleep
-                        Thread.sleep(250);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.out.println("Error attempting to receive file: " + ex.getCause());
-                    System.err.println("Error attempting to receive file: " + ex.getCause());
-                    ex.printStackTrace();
-                }
-            }
-        };
-        Thread receiveLoopThread = new Thread(receiveLoopRunnable);
-        receiveLoopThread.setName("Receive Loop Thread");
-        receiveLoopThread.start();
     }
 
     // Send Methods
@@ -153,11 +90,11 @@ public class Server
 
     // Receive Methods
     public void receiveFile() {
-        receivingFile = true;
         if (socket == null) {
-            receivingFile = false;
             return;
         }
+
+        receivingFile = true;
 
         try {
             System.out.println("Waiting to receive file...");
@@ -208,5 +145,101 @@ public class Server
         newTransfer.status = "Completed";
         newTransfer.progress = 100.0;
         controller.filesIncoming.add(newTransfer);
+    }
+
+    public void launchServer() {
+
+        System.out.println("Launching server...");
+
+        Runnable sendLoopRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    while (true)
+                    {
+                        // Make sure socket is assigned
+                        if (socket == null && serverSocket != null) {
+                            getSocket();
+                        }
+
+                        // send data to the client (if any)
+                        if (outgoingFiles.size() > 0) {
+
+                            File fileToSend = outgoingFiles.poll();
+
+                            if (fileToSend != null) {
+                                System.out.println("Sending file: " + fileToSend.getName());
+                                sendFile(fileToSend);
+                            }
+                        }
+
+                        // Do a little sleep
+                        Thread.sleep(250);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.err.println("Error attempting to receive file: " + ex.getMessage() + " " + ex.getCause());
+                }
+            }
+        };
+        sendLoopThread = new Thread(sendLoopRunnable);
+        sendLoopThread.setName("Send Loop Thread");
+        sendLoopThread.start();
+
+        Runnable receiveLoopRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    while (true)
+                    {
+                        // Receive file
+                        receiveFile();
+
+                        // Do a little sleep
+                        Thread.sleep(250);
+                    }
+                }
+                catch (InterruptedException ex)
+                {
+
+                }
+                catch (Exception ex)
+                {
+                    System.err.println("Error attempting to receive file: " + ex.getCause());
+                    ex.printStackTrace();
+                }
+            }
+        };
+        receiveLoopThread = new Thread(receiveLoopRunnable);
+        receiveLoopThread.setName("Receive Loop Thread");
+        receiveLoopThread.start();
+    }
+
+    public void shutDownServer() {
+        try
+        {
+            serverSocket.close();
+            serverSocket = null;
+
+            sendLoopThread.interrupt();
+            receiveLoopThread.interrupt();
+
+
+
+//            in.close();
+//            out.close();
+
+//            if (socket != null)
+//                socket.close();
+
+        }
+        catch (Exception ex)
+        {
+            System.err.println("Error shutting server down: " + ex.getMessage() + " " + ex.getCause());
+//            ex.printStackTrace();
+        }
     }
 }

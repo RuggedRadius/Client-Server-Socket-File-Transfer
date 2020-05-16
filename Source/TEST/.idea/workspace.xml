@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="92d2dbb1-f641-4c88-a6a7-255ffe510df0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../Client/all_time_games.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Server/all_time_games.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Server/giphy.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Server/gymdevice.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Client/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/out/production/Client/sample/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Client/out/production/Client/sample/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/out/production/Client/sample/Controller$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/out/production/Client/sample/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Client/out/production/Client/sample/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/out/production/Client/sample/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/../Client/out/production/Client/sample/sample.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/src/sample/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Client/src/sample/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/src/sample/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Client/src/sample/Controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Client/src/sample/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/../Client/src/sample/sample.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/out/production/Server/sample/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/out/production/Server/sample/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/out/production/Server/sample/Server$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/out/production/Server/sample/Server$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/out/production/Server/sample/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/out/production/Server/sample/Server.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/out/production/Server/sample/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/out/production/Server/sample/sample.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/src/sample/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/sample/Controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/src/sample/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/sample/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/src/sample/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/sample/sample.fxml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="JUnit5 Test Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\Ben\Documents\GitHub\JavaIII_AT2.7\Source\TEST\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1bwCP1c1qHhYQHfcCwyA1qtqoQC" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
+    <property name="create.test.in.the.same.root" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Derp" />
+      <module name="TEST" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="92d2dbb1-f641-4c88-a6a7-255ffe510df0" name="Default Changelist" comment="" />
+      <created>1589533740202</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589533740202</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589533952346">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589533952346" />
+    <state x="689" y="304" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1589533950094">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="689" y="304" key="#com.intellij.ide.util.TreeClassChooserDialog/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589533950094" />
+    <state width="1877" height="272" key="GridCell.Tab.0.bottom" timestamp="1589536596604">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="272" key="GridCell.Tab.0.bottom/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589536596604" />
+    <state width="1877" height="272" key="GridCell.Tab.0.center" timestamp="1589536596604">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="272" key="GridCell.Tab.0.center/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589536596604" />
+    <state width="1877" height="272" key="GridCell.Tab.0.left" timestamp="1589536596604">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="272" key="GridCell.Tab.0.left/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589536596604" />
+    <state width="1877" height="272" key="GridCell.Tab.0.right" timestamp="1589536596604">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="272" key="GridCell.Tab.0.right/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589536596604" />
+    <state x="664" y="413" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1589533807773">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="664" y="413" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589533807773" />
+    <state x="731" y="223" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1589535275627">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="731" y="223" key="com.intellij.testIntegration.createTest.CreateTestDialog/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1589535275627" />
+  </component>
+</project>

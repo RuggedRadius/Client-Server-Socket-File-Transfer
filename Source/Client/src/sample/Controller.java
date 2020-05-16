@@ -20,27 +20,23 @@ public class Controller
     public TextField txtIp3;
     public TextField txtIp4;
     public TextField txtPortNumber;
-
     public TableView tblIncoming;
     public TableView tblOutgoing;
+    public Button btnJoinServer;
+    public Button btnLeaveServer;
 
     public ObservableList<FileTransfer> filesIncoming;
     public ObservableList<FileTransfer> filesOutgoing;
 
     private Client client;
 
+
+
     public void initialize() {
         // Init tables
         initIncomingTable();
         initOutgoingTable();
-
-        // Create client
-        int port = Integer.parseInt(txtPortNumber.getText());
-        lblStatus.setText("Initialising client...");
-        client = new Client(getIpAddress(), port, this);
-        lblStatus.setText("Running client...");
-        client.startClient();
-        lblStatus.setText("Client running");
+        lblStatus.setText("Client not connected.");
     }
     private String getIpAddress() {
         return txtIp1.getText() + "." + txtIp2.getText() + "." +txtIp3.getText() + "." +txtIp4.getText() + "";
@@ -70,7 +66,6 @@ public class Controller
     }
 
     public void sendFile(File file) {
-
         if (client != null)
         {
             // Create File transfer for table
@@ -140,5 +135,26 @@ public class Controller
 
     @FXML public void exitApplication() {
         System.exit(0);
+    }
+
+    @FXML public void joinServer()
+    {
+        // Create client
+        int port = Integer.parseInt(txtPortNumber.getText());
+        lblStatus.setText("Initialising client...");
+        client = new Client(getIpAddress(), port, this);
+        lblStatus.setText("Running client...");
+        client.startClient();
+        lblStatus.setText("Client running");
+
+        btnJoinServer.setDisable(true);
+        btnLeaveServer.setDisable(false);
+    }
+    @FXML public void leaveServer()
+    {
+        client.endConnection();
+
+        btnJoinServer.setDisable(false);
+        btnLeaveServer.setDisable(true);
     }
 }

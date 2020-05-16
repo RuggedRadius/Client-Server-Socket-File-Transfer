@@ -26,7 +26,7 @@ public class Client
 
     boolean receivingFile;
     boolean sendingFile;
-    boolean initialised;
+    public boolean running;
 
     // Constructor
     public Client(String _host, int port, Controller _controller) {
@@ -73,27 +73,36 @@ public class Client
     }
 
     public void startClient() {
+        running = true;
         launchSendingLoop();
         launchReceivingLoop();
     }
 
     // Connection Methods
-    public void endConnection() throws IOException {
-
+    public void endConnection() {
         // Close connection
-        out.close();
-        in.close();
-        socket.close();
+        try
+        {
+            running = false;
+            out.close();
+            in.close();
+            socket.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     // Send Methods
     public void launchSendingLoop() {
+        System.out.println("Launching client sending loop...");
         Runnable sendLoopRunnable = new Runnable() {
             @Override
             public void run() {
                 try
                 {
-                    while (true)
+                    while (running)
                     {
                         // send data to the client (if any)
                         if (outgoingFiles.size() > 0) {
@@ -112,7 +121,6 @@ public class Client
                 }
                 catch (Exception ex)
                 {
-                    System.out.println("Error attempting to receive file: " + ex.getCause());
                     System.err.println("Error attempting to receive file: " + ex.getCause());
                     ex.printStackTrace();
                 }
@@ -150,7 +158,7 @@ public class Client
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                while (true)
+                while (running)
                 {
                     receiveFile();
                 }

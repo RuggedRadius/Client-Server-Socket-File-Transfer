@@ -28,30 +28,16 @@ public class Controller
     // FX Controls
     public TableView tblIncoming;
     public TableView tblOutgoing;
-
     public Label lblStatus;
-
     public TextField txtPortNumber;
+    public Button btnStartServer;
+    public Button btnStopServer;
 
     public void initialize() {
         initIncomingTable();
         initOutgoingTable();
 
-        try
-        {
-            // Create server
-            int port = Integer.parseInt(txtPortNumber.getText());
-            server = new Server(port, this);
-
-            // Launch server
-            lblStatus.setText("Launching server...");
-            server.launchServer();
-            lblStatus.setText("Sever running");
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        lblStatus.setText("Server not running.");
     }
 
     private void initIncomingTable() {
@@ -149,6 +135,62 @@ public class Controller
 
     @FXML public void exitApplication() {
         System.exit(0);
+    }
+
+    @FXML public void startServer()
+    {
+        try
+        {
+            // Create server
+            int port = Integer.parseInt(txtPortNumber.getText());
+            server = new Server(port, this);
+
+            // Launch server
+            lblStatus.setText("Launching server...");
+            server.launchServer();
+            lblStatus.setText("Sever running");
+
+            btnStopServer.setDisable(false);
+            btnStartServer.setDisable(true);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Can't launch server; " + ex.getMessage(),
+                    "Error launching Server",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            System.err.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML public void stopServer()
+    {
+        if (server != null)
+        {
+            // Shut down server
+            server.shutDownServer();
+
+            System.out.println("Server stopped.");
+            lblStatus.setText("Server not running.");
+
+            // Toggle buttons
+            btnStopServer.setDisable(true);
+            btnStartServer.setDisable(false);
+        }
+        else
+        {
+            // Show error
+            System.err.println("Error: Cant shut down server; server is null.");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Can't shut down server; server is null.",
+                    "Error shutting down Server",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
 }

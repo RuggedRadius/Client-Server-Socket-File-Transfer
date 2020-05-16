@@ -95,6 +95,9 @@
                               <Separator prefWidth="200.0" />
                               <Label layoutX="10.0" layoutY="10.0" text="Port Number" />
                               <TextField fx:id="txtPortNumber" text="1235" />
+                               <Separator prefWidth="200.0" />
+                               <Button fx:id="btnJoinServer" mnemonicParsing="false" onAction="#joinServer" prefWidth="180.0" text="Join Server" />
+                              <Button fx:id="btnLeaveServer" layoutX="10.0" layoutY="113.0" mnemonicParsing="false" onAction="#leaveServer" prefWidth="180.0" text="Leave Server" />
                            </children>
                         </VBox>
                      </children>
