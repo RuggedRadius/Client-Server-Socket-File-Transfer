@@ -7,10 +7,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Server
 {
@@ -24,7 +21,8 @@ public class Server
     DataOutputStream out;
     DataInputStream in;
 
-    Queue<File> outgoingFiles;
+//    Queue<File> outgoingFiles;
+    ArrayDeque<File> outgoingFiles;
 
     boolean receivingFile;
     boolean sendingFile;
@@ -44,7 +42,8 @@ public class Server
         currentPort = port;
         serverSocket = new ServerSocket(currentPort);
 
-        outgoingFiles = new LinkedList<>();
+//        outgoingFiles = new LinkedList<>();
+        outgoingFiles = new ArrayDeque<File>();
     }
 
     private void getSocket() throws IOException {
@@ -68,8 +67,10 @@ public class Server
     // Send Methods
     public void sendFile(File file) throws IOException {
 
-        if (file == null)
+        if (file == null) {
+            System.err.println("Sending error: File was null.");
             return;
+        }
 
         sendingFile = true;
         System.out.println("Sending file: " + file.getName());
@@ -80,8 +81,11 @@ public class Server
         // Write file name
         // Write length of the file
         // Write file contents
+        System.out.println("Sending file name...");
         out.writeUTF(file.getName());
+        System.out.println("Sending file length...");
         out.writeInt(fileContent.length);
+        System.out.println("Sending file contents...");
         out.write(fileContent);
 
         System.out.println("File "+file.getName()+" sent successfully.");
@@ -166,11 +170,12 @@ public class Server
                         // send data to the client (if any)
                         if (outgoingFiles.size() > 0) {
 
-                            File fileToSend = outgoingFiles.poll();
+                            File fileToSend = outgoingFiles.peek();
 
-                            if (fileToSend != null) {
-                                System.out.println("Sending file: " + fileToSend.getName());
+                            if (fileToSend != null && !sendingFile)
+                            {
                                 sendFile(fileToSend);
+                                outgoingFiles.remove();
                             }
                         }
 

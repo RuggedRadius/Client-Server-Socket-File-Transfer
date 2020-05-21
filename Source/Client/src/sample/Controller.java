@@ -45,7 +45,7 @@ public class Controller
     @FXML public void sendSingleFile() {
         File fileToSend = getLocalFile();
         if (fileToSend != null) {
-            sendFile(getLocalFile());
+            sendFile(fileToSend);
         }
     }
     @FXML public void sendMultipleFiles() {

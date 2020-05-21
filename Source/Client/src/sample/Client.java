@@ -107,7 +107,7 @@ public class Client
                         // send data to the client (if any)
                         if (outgoingFiles.size() > 0) {
 
-                            File fileToSend = outgoingFiles.poll();
+                            File fileToSend = outgoingFiles.element();
 
                             if (fileToSend != null) {
                                 System.out.println("Sending file: " + fileToSend.getName());
@@ -161,6 +161,11 @@ public class Client
                 while (running)
                 {
                     receiveFile();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -174,14 +179,16 @@ public class Client
 
         try
         {
-            if (socket == null)
+            if (socket == null) {
+                System.out.println("No socket found.");
                 return;
+            }
 
             // Get name and length of incoming file
             String fileName = in.readUTF();
-            int length = in.readInt();
-
             System.out.println("File: " + fileName);
+
+            int length = in.readInt();
             System.out.println("Length: " + length);
 
             if (length > 0)
