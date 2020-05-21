@@ -15,7 +15,7 @@ public class FileTransfer
     {
         file = _file;
         fileName = file.getName();
-        progress = 0.0;
+        progress = 100.0;
         status = "Initiating";
     }
 
