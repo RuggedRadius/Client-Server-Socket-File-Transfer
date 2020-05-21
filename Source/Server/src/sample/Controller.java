@@ -5,16 +5,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
-
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.sql.ResultSet;
 import java.util.List;
 
 public class Controller
@@ -22,7 +15,6 @@ public class Controller
     // Attributes
     public ObservableList<FileTransfer> filesIncoming;
     public ObservableList<FileTransfer> filesOutgoing;
-
     public Server server;
 
     // FX Controls
@@ -33,13 +25,15 @@ public class Controller
     public Button btnStartServer;
     public Button btnStopServer;
 
-    public void initialize() {
+
+    // General methods
+    public boolean initialize() {
         initIncomingTable();
         initOutgoingTable();
 
         lblStatus.setText("Server not running.");
+        return true;
     }
-
     private void initIncomingTable() {
 
         // Set table data
@@ -80,65 +74,10 @@ public class Controller
         // Add column to TableView
         tblOutgoing.getColumns().addAll(colFileName, colStatus, colProgress);
     }
-
-    @FXML public void sendSingleFile() {
-        File fileToSend = getLocalFile();
-        if (fileToSend != null) {
-            sendFile(fileToSend);
-        }
-    }
-    @FXML public void sendMultipleFiles() {
-        List<File> filesToSend = getLocalFiles();
-        if (filesToSend != null && filesToSend.size() > 0) {
-            for (File file : filesToSend)
-                sendFile(file);
-        }
-    }
-
-    public File getLocalFile() {
-
-        FileChooser mrChoosey = new FileChooser();
-        return  mrChoosey.showOpenDialog(null);
-    }
-    public List<File> getLocalFiles() {
-        FileChooser mrChoosey = new FileChooser();
-        return  mrChoosey.showOpenMultipleDialog(null);
-    }
-
-    public void sendFile(File file) {
-
-        if (server != null)
-        {
-            // Create File transfer for table
-            FileTransfer newTransfer = new FileTransfer(file);
-            newTransfer.status = "Completed";
-            newTransfer.progress = 0.0;
-            filesOutgoing.add(newTransfer);
-
-            // Add to outgoing queue for processing
-            server.outgoingFiles.add(file);
-
-            // Log to user
-            System.out.println("File " + file.getName() + " added to outgoing queue.");
-        }
-        else
-        {
-            System.out.println("Error: No server found!");
-            JOptionPane.showMessageDialog(
-                    null,
-                    "No server found.",
-                    "Server Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }
-
     @FXML public void exitApplication() {
         System.exit(0);
     }
-
-    @FXML public void startServer()
-    {
+    @FXML public boolean startServer() {
         try
         {
             // Create server
@@ -147,11 +86,14 @@ public class Controller
 
             // Launch server
             lblStatus.setText("Launching server...");
-            server.launchServer();
+            server.initServer();
+            server.startThreads();
             lblStatus.setText("Sever running");
 
             btnStopServer.setDisable(false);
             btnStartServer.setDisable(true);
+
+            return true;
         }
         catch (Exception ex)
         {
@@ -163,11 +105,11 @@ public class Controller
             );
             System.err.println(ex.getMessage());
             ex.printStackTrace();
+
+            return false;
         }
     }
-
-    @FXML public void stopServer()
-    {
+    @FXML public void stopServer() {
         if (server != null)
         {
             // Shut down server
@@ -192,5 +134,69 @@ public class Controller
             );
         }
     }
+
+    // File handling
+    public File getLocalFile() {
+
+        FileChooser mrChoosey = new FileChooser();
+        return  mrChoosey.showOpenDialog(null);
+    }
+    public List<File> getLocalFiles() {
+        FileChooser mrChoosey = new FileChooser();
+        return  mrChoosey.showOpenMultipleDialog(null);
+    }
+
+    // User actions
+    @FXML public void sendSingleFile() {
+        File fileToSend = getLocalFile();
+        if (fileToSend != null) {
+            sendFile(fileToSend);
+        }
+    }
+    @FXML public void sendMultipleFiles() {
+        List<File> filesToSend = getLocalFiles();
+        if (filesToSend != null && filesToSend.size() > 0) {
+            for (File file : filesToSend)
+                sendFile(file);
+        }
+    }
+    public void sendFile(File file) {
+
+        FileTransfer newTransfer = null;
+
+        try
+        {
+            // Create File transfer for table
+            newTransfer = new FileTransfer(file);
+            newTransfer.status = "Completed";
+            newTransfer.progress = 100.0;
+            filesOutgoing.add(newTransfer);
+
+
+            // Add to outgoing queue for processing
+            server.outgoingFiles.add(file);
+
+            // Log to user
+            System.out.println("File " + file.getName() + " added to outgoing queue.");
+        }
+        catch (Exception ex)
+        {
+            if (newTransfer != null)
+            {
+                newTransfer.status = "Failed";
+                newTransfer.progress = 0.0;
+            }
+
+            System.out.println("Error: No server found!");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No server found.",
+                    "Server Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+
 
 }

@@ -25,15 +25,13 @@ public class Controller
     public Button btnJoinServer;
     public Button btnLeaveServer;
 
+    // Attributes
     public ObservableList<FileTransfer> filesIncoming;
     public ObservableList<FileTransfer> filesOutgoing;
-
     private Client client;
 
-
-
+    // General Methods
     public void initialize() {
-        // Init tables
         initIncomingTable();
         initOutgoingTable();
         lblStatus.setText("Client not connected.");
@@ -41,57 +39,6 @@ public class Controller
     private String getIpAddress() {
         return txtIp1.getText() + "." + txtIp2.getText() + "." +txtIp3.getText() + "." +txtIp4.getText() + "";
     }
-
-    @FXML public void sendSingleFile() {
-        File fileToSend = getLocalFile();
-        if (fileToSend != null) {
-            sendFile(fileToSend);
-        }
-    }
-    @FXML public void sendMultipleFiles() {
-        List<File> filesToSend = getLocalFiles();
-        if (filesToSend != null && filesToSend.size() > 0) {
-            for (File file : filesToSend)
-                sendFile(file);
-        }
-    }
-
-    public File getLocalFile() {
-        FileChooser mrChoosey = new FileChooser();
-        return  mrChoosey.showOpenDialog(null);
-    }
-    public List<File> getLocalFiles() {
-        FileChooser mrChoosey = new FileChooser();
-        return  mrChoosey.showOpenMultipleDialog(null);
-    }
-
-    public void sendFile(File file) {
-        if (client != null)
-        {
-            // Create File transfer for table
-            FileTransfer newTransfer = new FileTransfer(file);
-            newTransfer.status = "Completed";
-            newTransfer.progress = 0.0;
-            filesOutgoing.add(newTransfer);
-
-            // Add to outgoing queue for processing
-            client.outgoingFiles.add(file);
-
-            // Log to user
-            lblStatus.setText("File " + file.getName() + " added to outgoing queue.");
-        }
-        else
-        {
-            System.out.println("Error: No server found!");
-            JOptionPane.showMessageDialog(
-                    null,
-                    "No server found.",
-                    "Server Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }
-
     private void initIncomingTable() {
 
         // Set table data
@@ -132,13 +79,10 @@ public class Controller
         // Add column to TableView
         tblOutgoing.getColumns().addAll(colFileName, colStatus, colProgress);
     }
-
     @FXML public void exitApplication() {
         System.exit(0);
     }
-
-    @FXML public void joinServer()
-    {
+    @FXML public void joinServer() {
         // Create client
         int port = Integer.parseInt(txtPortNumber.getText());
         lblStatus.setText("Initialising client...");
@@ -150,11 +94,62 @@ public class Controller
         btnJoinServer.setDisable(true);
         btnLeaveServer.setDisable(false);
     }
-    @FXML public void leaveServer()
-    {
+    @FXML public void leaveServer() {
         client.endConnection();
 
         btnJoinServer.setDisable(false);
         btnLeaveServer.setDisable(true);
+    }
+
+    // File Handling
+    public File getLocalFile() {
+        FileChooser mrChoosey = new FileChooser();
+        return  mrChoosey.showOpenDialog(null);
+    }
+    public List<File> getLocalFiles() {
+        FileChooser mrChoosey = new FileChooser();
+        return  mrChoosey.showOpenMultipleDialog(null);
+    }
+
+    // User Actions
+    public void sendFile(File file) {
+        if (client != null)
+        {
+            // Create File transfer for table
+            FileTransfer newTransfer = new FileTransfer(file);
+            newTransfer.status = "Completed";
+            newTransfer.progress = 100.0;
+            filesOutgoing.add(newTransfer);
+
+            // Add to outgoing queue for processing
+            client.outgoingFiles.add(file);
+
+            // Log to user
+            lblStatus.setText("File " + file.getName() + " added to outgoing queue.");
+        }
+        else
+        {
+            System.out.println("Error: No server found!");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No server found.",
+                    "Server Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+    @FXML public void sendSingleFile() {
+        File fileToSend = getLocalFile();
+        if (fileToSend != null) {
+            sendFile(fileToSend);
+        }
+    }
+    @FXML public void sendMultipleFiles() {
+        List<File> filesToSend = getLocalFiles();
+        if (filesToSend != null && filesToSend.size() > 0) {
+            for (File file : filesToSend) {
+                sendFile(file);
+            }
+        }
     }
 }

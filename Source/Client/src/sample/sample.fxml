@@ -15,8 +15,8 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Send">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Send file..." />
-                  <MenuItem mnemonicParsing="false" text="Send multiple files..." />
+                        <MenuItem fx:id="miSendFile" mnemonicParsing="false" onAction="#sendSingleFile" text="Send file..." />
+                  <MenuItem fx:id="miSendFiles" mnemonicParsing="false" onAction="#sendMultipleFiles" text="Send multiple files..." />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

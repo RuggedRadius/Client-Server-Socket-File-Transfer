@@ -8,13 +8,25 @@ import javafx.scene.layout.Pane;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/*
+
+ * @startuml
+
+ * car --|> wheel
+
+ * @enduml
+
+ */
+
 public class Client
 {
+    // Attributes
     public Controller controller;
     public Socket socket;
     public DataOutputStream out;
@@ -72,6 +84,7 @@ public class Client
         }
     }
 
+
     public void startClient() {
         running = true;
         launchSendingLoop();
@@ -112,6 +125,7 @@ public class Client
                             if (fileToSend != null) {
                                 System.out.println("Sending file: " + fileToSend.getName());
                                 sendFile(fileToSend);
+                                outgoingFiles.remove();
                             }
                         }
 
@@ -142,11 +156,19 @@ public class Client
         byte[] fileContent = Files.readAllBytes(file.toPath());
 
         // Write file name
-        // Write length of the file
-        // Write file contents
+        System.out.println("Sending file name...");
         out.writeUTF(file.getName());
+
+        // Write length of the file
+        System.out.println("Sending file length...");
         out.writeInt(fileContent.length);
+
+        // Write file contents
+        System.out.println("Sending file contents...");
         out.write(fileContent);
+
+        // Flush buffers
+        out.flush();
 
         System.out.println("File "+file.getName()+" sent successfully.");
         sendingFile = false;
@@ -174,15 +196,15 @@ public class Client
     }
     public void receiveFile() {
 
-        receivingFile = true;
-        System.out.println("Awaiting incoming file...");
-
         try
         {
             if (socket == null) {
                 System.out.println("No socket found.");
                 return;
             }
+
+            receivingFile = true;
+            System.out.println("Waiting to receive file...");
 
             // Get name and length of incoming file
             String fileName = in.readUTF();
@@ -215,6 +237,12 @@ public class Client
 
             // Add to outgoing table
             addCompletedRecordToIncoming(fileName);
+        }
+        catch (SocketException e)
+        {
+            System.err.println("Connection to host lost!");
+            System.out.println("Leaving server...");
+            controller.leaveServer();
         }
         catch (Exception ex)
         {
